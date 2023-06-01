@@ -1,9 +1,28 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserProfileResponseDto } from './dto/user-profile-response.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async getMe(): Promise<UserProfileResponseDto> {
+    // Добавить опции того, что надо тут найти
+    const me = await this.userRepository.find();
+
+    // Деструктурировать me, вернуть только нужные поля
+
+    return "azaza"
+  }
+
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
