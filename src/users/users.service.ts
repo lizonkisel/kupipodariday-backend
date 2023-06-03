@@ -14,32 +14,35 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async getMe(): Promise<UserProfileResponseDto> {
-    // Добавить опции того, что надо тут найти
-    const me = await this.userRepository.find();
+  // async getMe(): Promise<UserProfileResponseDto> {
+  //   // Добавить опции того, что надо тут найти
+  //   const me = await this.userRepository.findOne();
 
-    // Деструктурировать me, вернуть только нужные поля
+  //   // Деструктурировать me, вернуть только нужные поля
 
-    return "azaza"
+  //   return "azaza"
+  // }
+
+  async findOne(query) {
+    const user = await this.userRepository.findOne(query);
+    return user;
   }
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async findOneById(id: number) {
+    const user = await this.userRepository.findOneBy({ id });
+
+    return user;
+    // return `This action returns a #${id} user`;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async create(createUserDto: CreateUserDto) {
+    const user = await this.userRepository.create(createUserDto);
+    return this.userRepository.save(user);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  async findByUsername(username: string) {
+    const user = await this.userRepository.findOneBy({ username });
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return user;
   }
 }
