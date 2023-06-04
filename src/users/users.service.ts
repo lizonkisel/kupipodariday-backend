@@ -15,14 +15,19 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  // async getMe(): Promise<UserProfileResponseDto> {
-  //   // Добавить опции того, что надо тут найти
-  //   const me = await this.userRepository.findOne();
+  async getMe(user): Promise<UserProfileResponseDto> {
+    // Добавить опции того, что надо тут найти
+    const username = user.username;
+    const me = await this.userRepository.findOne({
+      where: {
+        username: username,
+      },
+    });
 
-  //   // Деструктурировать me, вернуть только нужные поля
+    // Деструктурировать me, вернуть только нужные поля
 
-  //   return "azaza"
-  // }
+    return me;
+  }
 
   async findOne(query) {
     const user = await this.userRepository.findOne(query);
@@ -40,7 +45,7 @@ export class UsersService {
     // const sameNameUser = await this.findOne(createUserDto.username);
     const sameNameUser = await this.findOne({
       where: {
-        username: createUserDto.username
+        username: createUserDto.username,
       },
     });
     if (sameNameUser) {
