@@ -17,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       /* Получаем секрет для подписи JWT токенов из конфигурации */
       secretOrKey: configService.get<string>('jwt_secret'),
-      // secretOrKey: configService.getSecretKey,
+      ignoreExpiration: false,
     });
   }
 
@@ -27,10 +27,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    */
   async validate(jwtPayload: { sub: number }) {
     /* В subject токена будем передавать идентификатор пользователя */
-    const user = this.usersService.findOne(jwtPayload.sub);
+    console.log('azaza');
+    const user = this.usersService.findOneById(jwtPayload.sub);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('azaza');
     }
 
     return user;

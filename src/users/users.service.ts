@@ -15,19 +15,19 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async getMe(user): Promise<UserProfileResponseDto> {
-    // Добавить опции того, что надо тут найти
-    const username = user.username;
-    const me = await this.userRepository.findOne({
-      where: {
-        username: username,
-      },
-    });
+  // async getMe(user): Promise<UserProfileResponseDto> {
+  //   // Добавить опции того, что надо тут найти
+  //   const username = user.username;
+  //   const me = await this.userRepository.findOne({
+  //     where: {
+  //       username: username,
+  //     },
+  //   });
 
-    // Деструктурировать me, вернуть только нужные поля
+  //   // Деструктурировать me, вернуть только нужные поля
 
-    return me;
-  }
+  //   return me;
+  // }
 
   async findOne(query) {
     const user = await this.userRepository.findOne(query);
@@ -40,6 +40,7 @@ export class UsersService {
     return user;
     // return `This action returns a #${id} user`;
   }
+
 
   async create(createUserDto: CreateUserDto) {
     // const sameNameUser = await this.findOne(createUserDto.username);
