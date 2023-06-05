@@ -21,13 +21,10 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  getMe(@Req() req) {
-  // getMe(@Req() req): Promise<UserProfileResponseDto> {
-  //   // return this.usersService.getMe(req.user);
-  //   const user = req.user;
-  //   delete user.password;
-  //   return user;
-    return 'azaza';
+  getMe(@Req() req): Promise<UserProfileResponseDto> {
+    const user = req.user;
+    delete user.password;
+    return user;
   }
 
   @Post()

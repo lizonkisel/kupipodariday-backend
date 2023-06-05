@@ -16,7 +16,8 @@ export class AuthService {
     const payload = { sub: user.id };
     // Вот здесь я добавила { secret: 'jwt_secret' }, пока не очень ясно, зачем. Но работает)
     return {
-      access_token: this.jwtService.sign(payload, { secret: 'secret' }),
+      // access_token: this.jwtService.sign(payload, { secret: 'jwt_secret' }),
+      access_token: this.jwtService.sign(payload),
     };
   }
 
