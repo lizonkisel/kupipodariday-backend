@@ -1,4 +1,10 @@
-import { Length, IsUrl, IsEmail } from 'class-validator';
+import {
+  Length,
+  IsUrl,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -25,21 +31,26 @@ export class User {
 
   @Column({ unique: true })
   @Length(2, 30)
+  @IsNotEmpty()
   username: string;
 
   @Column({ default: 'Пока ничего не рассказал о себе' })
   @Length(2, 200)
+  @IsOptional()
   about: string;
 
   @Column({ default: 'https://i.pravatar.cc/300' })
   @IsUrl()
+  @IsOptional()
   avatar: string;
 
   @Column({ unique: true })
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @Column()
+  @IsNotEmpty()
   password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)
