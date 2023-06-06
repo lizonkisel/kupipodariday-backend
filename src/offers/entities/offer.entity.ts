@@ -1,4 +1,12 @@
 import {
+  Length,
+  Min,
+  IsUrl,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
+import {
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,

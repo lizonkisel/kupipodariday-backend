@@ -22,4 +22,9 @@ export class WishesService {
     await this.wishRepository.insert(newWish);
     return newWish;
   }
+
+  async findOne(query) {
+    const wish = await this.wishRepository.findOne(query);
+    return wish;
+  }
 }
