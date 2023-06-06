@@ -41,7 +41,6 @@ export class UsersService {
     // return `This action returns a #${id} user`;
   }
 
-
   async create(createUserDto: CreateUserDto) {
     // const sameNameUser = await this.findOne(createUserDto.username);
     const sameNameUser = await this.findOne({
