@@ -6,9 +6,12 @@ import {
   UpdateDateColumn,
   Column,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 import { User } from 'src/users/entities/user.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Entity()
 export class Wishlist {
@@ -36,6 +39,7 @@ export class Wishlist {
   @ManyToOne(() => User, (user) => user.wishlists)
   owner: User;
 
-  //items:
-  // содержит набор ссылок на подарки.
+  @ManyToMany(() => Wish)
+  @JoinTable()
+  items: Wish[];
 }
