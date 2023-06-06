@@ -38,7 +38,7 @@ export class AuthController {
     /* При регистрации создаём пользователя и генерируем для него токен */
     // const user = this.usersService.create(createUserDto);
 
-    const user = await this.usersService.create(createUserDto);
+    const user = await this.usersService.createUser(createUserDto);
     delete user.password;
 
     this.authService.auth(user);

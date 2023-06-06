@@ -15,20 +15,6 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  // async getMe(user): Promise<UserProfileResponseDto> {
-  //   // Добавить опции того, что надо тут найти
-  //   const username = user.username;
-  //   const me = await this.userRepository.findOne({
-  //     where: {
-  //       username: username,
-  //     },
-  //   });
-
-  //   // Деструктурировать me, вернуть только нужные поля
-
-  //   return me;
-  // }
-
   async findOne(query) {
     const user = await this.userRepository.findOne(query);
     return user;
@@ -41,7 +27,7 @@ export class UsersService {
     // return `This action returns a #${id} user`;
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto) {
     // const sameNameUser = await this.findOne(createUserDto.username);
     const sameNameUser = await this.findOne({
       where: {
@@ -69,6 +55,20 @@ export class UsersService {
     createUserDto.password = hash;
     const user = await this.userRepository.create(createUserDto);
     return this.userRepository.save(user);
+  }
+
+  async updateUser(updateUserDto, currentUserId) {
+    const user = this.findOneById(currentUserId);
+
+    if (!user) {
+      throw new HttpException('Такого пользователя не существует', 404);
+    }
+
+    await this.userRepository.update(currentUserId, updateUserDto);
+
+    const updatedUser = await this.findOneById(currentUserId);
+    const { password, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword;
   }
 
   async findByUsername(username: string) {

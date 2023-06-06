@@ -50,7 +50,8 @@ export class User {
   @IsNotEmpty()
   email: string;
 
-  @Column({ select: false })
+  // @Column({ select: false })
+  @Column()
   @IsNotEmpty()
   password: string;
 

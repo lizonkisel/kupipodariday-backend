@@ -29,7 +29,13 @@ export class UsersController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    return this.usersService.createUser(createUserDto);
+  }
+
+  @Patch('me')
+  updateUser(@Body() updateUserDto: UpdateUserDto, @Req() req) {
+    const currentUserId = req.user.id;
+    return this.usersService.updateUser(updateUserDto, currentUserId);
   }
 
   // @Get('me/wishes')
