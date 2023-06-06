@@ -58,6 +58,11 @@ export class UsersService {
   }
 
   async updateUser(updateUserDto, currentUserId) {
+    if (updateUserDto.password) {
+      const hash = await bcrypt.hash(updateUserDto.password, 10);
+      updateUserDto.password = hash;
+    }
+
     const user = this.findOneById(currentUserId);
 
     if (!user) {
