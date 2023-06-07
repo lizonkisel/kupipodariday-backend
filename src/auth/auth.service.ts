@@ -22,7 +22,7 @@ export class AuthService {
   }
 
   async validatePassword(username: string, password: string) {
-    const user = await this.usersService.findByUsername(username);
+    const user = await this.usersService.findUserByUsername(username);
 
     /* В идеальном случае пароль обязательно должен быть захэширован */
 

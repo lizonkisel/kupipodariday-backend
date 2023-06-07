@@ -46,8 +46,11 @@ export class UsersController {
 
   @Get(':username')
   getUserByUsername(@Param('username') username: string) {
-    return this.usersService.findByUsername(username);
+    return this.usersService.findUserByUsername(username);
   }
 
-  // @Get(':username/wishes')
+  @Get(':username/wishes')
+  getWishesByUsername(@Param('username') username: string) {
+    return this.usersService.findWishesByUsername(username);
+  }
 }

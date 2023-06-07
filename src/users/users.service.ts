@@ -95,11 +95,26 @@ export class UsersService {
     return wishes;
   }
 
-  async findByUsername(username: string) {
+  async findUserByUsername(username: string) {
     const user = await this.userRepository.findOneBy({ username });
 
     delete user.email;
     delete user.password;
     return user;
+  }
+
+  async findWishesByUsername(username: string) {
+    const user = await this.findOne({
+      where: {
+        username: username,
+      },
+      relations: {
+        wishes: {
+          offers: true,
+        },
+      },
+    });
+
+    return user.wishes;
   }
 }
