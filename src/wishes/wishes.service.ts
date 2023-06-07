@@ -27,4 +27,9 @@ export class WishesService {
     const wish = await this.wishRepository.findOne(query);
     return wish;
   }
+
+  async findMany(query) {
+    const wishes = await this.wishRepository.find(query);
+    return wishes;
+  }
 }

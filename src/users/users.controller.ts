@@ -38,7 +38,12 @@ export class UsersController {
     return this.usersService.updateUser(updateUserDto, currentUserId);
   }
 
-  // @Get('me/wishes')
+  @Get('me/wishes')
+  getMyWishes(@Req() req) {
+    const currentUserId = req.user.id;
+    return this.usersService.getMyWishes(currentUserId);
+  }
+
   // @Get(':username')
   // @Get(':username/wishes')
 }

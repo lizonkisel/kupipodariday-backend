@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { User } from './entities/user.entity';
+import { WishesService } from 'src/wishes/wishes.service';
 
 @Injectable()
 export class UsersService {
@@ -73,6 +74,25 @@ export class UsersService {
     const updatedUser = await this.findOneById(currentUserId);
     const { password, ...userWithoutPassword } = updatedUser;
     return userWithoutPassword;
+  }
+
+  async getMyWishes(currentUserId) {
+    const user = await this.findOne({
+      where: { id: currentUserId },
+      relations: {
+        wishes: {
+          owner: true,
+          offers: {
+            user: true,
+            item: true,
+          },
+        },
+      },
+    });
+
+    const wishes = user.wishes;
+
+    return wishes;
   }
 
   async findByUsername(username: string) {
