@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
@@ -31,5 +31,21 @@ export class WishesService {
   async findMany(query) {
     const wishes = await this.wishRepository.find(query);
     return wishes;
+  }
+
+  async deleteWishById(id) {
+    const wish = await this.findOne({
+      where: { id: id },
+    });
+    if (!wish) {
+      throw new HttpException('Желания с таким id не существует', 404);
+    }
+    await this.deleteOne(id);
+    return wish;
+  }
+
+  async deleteOne(id) {
+    const deletedWish = await this.wishRepository.delete({ id });
+    return deletedWish;
   }
 }

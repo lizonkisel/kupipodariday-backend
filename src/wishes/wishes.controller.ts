@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Get, Body, Req, Param } from '@nestjs/common';
+import { Controller, UseGuards, Post, Get, Delete, Body, Req, Param } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
@@ -25,5 +25,10 @@ export class WishesController {
         offers: true,
       },
     });
+  }
+
+  @Delete(':id')
+  deleteWishById(@Param('id') id: string) {
+    return this.wishesService.deleteWishById(id);
   }
 }

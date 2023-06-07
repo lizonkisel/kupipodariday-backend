@@ -32,7 +32,7 @@ export class Offer {
   @ManyToOne(() => User, (user) => user.offers)
   user: User;
 
-  @ManyToOne(() => Wish, (wish) => wish.id)
+  @ManyToOne(() => Wish, (wish) => wish.offers)
   item: Wish;
 
   @Column()
