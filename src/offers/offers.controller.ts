@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Get, Body, Req } from '@nestjs/common';
+import { Controller, UseGuards, Post, Get, Body, Req, Param } from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
@@ -17,5 +17,22 @@ export class OffersController {
   @Get()
   getAllOffers() {
     return this.offersService.getAllOffers();
+  }
+
+  @Get(':id')
+  getOfferById(@Param('id') id: string) {
+    return this.offersService.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        item: {
+          owner: true,
+          offers: true,
+        },
+        user: true,
+        // wishlists: true,
+      },
+    });
   }
 }

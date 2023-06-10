@@ -51,4 +51,9 @@ export class OffersService {
     });
     return allOffers;
   }
+
+  async findOne(query) {
+    const offer = await this.offerRepository.findOne(query);
+    return offer;
+  }
 }
