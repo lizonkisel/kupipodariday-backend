@@ -19,6 +19,19 @@ export class WishlistsController {
     return this.wishlistsService.getAllWishlists();
   }
 
+  @Get(':id')
+  getWishlistById(@Param('id') id: string) {
+    return this.wishlistsService.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        owner: true,
+        items: true,
+      },
+    });
+  }
+
   @Delete(':id')
   deleteWishlist(@Param('id') id: string) {
     return this.wishlistsService.deleteWishlist(id);

@@ -54,6 +54,11 @@ export class WishlistsService {
     return allWishlists;
   }
 
+  async findOne(query) {
+    const wishlist = await this.wishlistRepository.findOne(query);
+    return wishlist;
+  }
+
   async deleteWishlist(id) {
     const deletedWishlist = await this.wishlistRepository.delete({ id });
     return deletedWishlist;
