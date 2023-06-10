@@ -22,6 +22,6 @@ export class CreateWishlistDto {
   image: string;
 
   @IsNotEmpty()
-  itemsId: Wish[];
-  // itemsId: number[];
+  // itemsId: Wish[];
+  itemsId: number[];
 }

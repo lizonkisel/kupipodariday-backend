@@ -32,6 +32,11 @@ export class WishlistsController {
     });
   }
 
+  @Patch(':id')
+  updateWishlistById(@Body() updateWishlistDto: UpdateWishlistDto, @Param('id') id: string, @Req() req) {
+    return this.wishlistsService.updateWishlistById(updateWishlistDto, id, req.user.id);
+  }
+
   @Delete(':id')
   deleteWishlist(@Param('id') id: string) {
     return this.wishlistsService.deleteWishlist(id);

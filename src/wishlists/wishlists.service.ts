@@ -59,6 +59,53 @@ export class WishlistsService {
     return wishlist;
   }
 
+  async updateWishlistById(updateWishlistDto, wishlistId, ownerId) {
+    const wishlist = await this.wishlistRepository.findOneBy({ id: wishlistId });
+
+    if (!wishlist) {
+      throw new HttpException('Нельзя отредактировать несуществующий вишлист', 404);
+    }
+
+    const { itemsId, ...restUpdateWishlistDto } = updateWishlistDto;
+
+    let storedItems;
+
+    if (itemsId) {
+      storedItems = await this.wishesService.findMany({
+        where: { id: In(updateWishlistDto.itemsId), owner: { id: ownerId } },
+      });
+
+      if (storedItems.length !== updateWishlistDto.itemsId.length) {
+        throw new HttpException(
+          'Вы можете добавлять только существующие подарки', 400,
+        );
+      }
+
+      // await this.wishlistRepository.save({id: wishlistId}, {
+      //   ...restUpdateWishlistDto,
+      //   items: storedItems,
+      // });
+      // await this.wishlistRepository.update({id: wishlistId}, {
+      //   ...restUpdateWishlistDto,
+      //   items: storedItems,
+      // });
+    }
+    // else {
+    //   await this.wishlistRepository.update(wishlistId, updateWishlistDto);
+    // }
+
+    const updatedWishlist = { ...wishlist, ...restUpdateWishlistDto };
+
+    if (storedItems) {
+      updatedWishlist.items = storedItems;
+    }
+
+    return this.wishlistRepository.save(updatedWishlist);
+
+    // const updatedWishlist = await this.wishlistRepository.findOneBy({ id: wishlistId });
+    // return updatedWishlist;
+  }
+
   async deleteWishlist(id) {
     const deletedWishlist = await this.wishlistRepository.delete({ id });
     return deletedWishlist;
