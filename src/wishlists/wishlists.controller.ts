@@ -14,6 +14,11 @@ export class WishlistsController {
     return this.wishlistsService.create(createWishlistDto, req.user);
   }
 
+  @Get()
+  getAllWishlists() {
+    return this.wishlistsService.getAllWishlists();
+  }
+
   @Delete(':id')
   deleteWishlist(@Param('id') id: string) {
     return this.wishlistsService.deleteWishlist(id);

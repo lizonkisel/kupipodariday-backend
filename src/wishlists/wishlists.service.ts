@@ -44,6 +44,16 @@ export class WishlistsService {
     return wish;
   }
 
+  async getAllWishlists() {
+    const allWishlists = await this.wishlistRepository.find({
+      relations: {
+        owner: true,
+        items: true,
+      },
+    });
+    return allWishlists;
+  }
+
   async deleteWishlist(id) {
     const deletedWishlist = await this.wishlistRepository.delete({ id });
     return deletedWishlist;
