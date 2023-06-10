@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { Wishlist } from './entities/wishlist.entity';
@@ -16,22 +16,36 @@ export class WishlistsService {
     private readonly wishesService: WishesService,
   ) {}
 
-  // create(createWishlistDto: CreateWishlistDto, owner: User) {
-  //   const wishesId = createWishlistDto.itemsId;
-  //   const items = this.wishesService.findMany(wishesId);
+  async create(createWishlistDto: CreateWishlistDto, owner: User) {
+    if (!createWishlistDto.description) {
+      createWishlistDto.description = 'Просто вишлист';
+    }
 
-  //   if (!wishes) {
-  //     throw new HttpException(
-  //       'Нельзя добавить в вишлист несуществующий подарок',
-  //       404,
-  //     );
-  //   }
+    const storedItems = await this.wishesService.findMany({
+      where: { id: In(createWishlistDto.itemsId), owner: { id: owner.id } },
+    });
 
-  //   const wishlist = this.wishlistRepository.create({
-  //     ...createWishlistDto,
-  //     owner,
-  //     items,
-  //   });
-  //   return 'This action adds a new wishlist';
-  // }
+    if (storedItems.length !== createWishlistDto.itemsId.length) {
+      throw new HttpException(
+        'Вы можете добавлять только существующие подарки', 400,
+      );
+    }
+
+    const wishlist = this.wishlistRepository.create({
+      ...createWishlistDto,
+      items: storedItems,
+      owner: owner,
+    });
+    return this.wishlistRepository.save(wishlist);
+  }
+
+  async findWish(query) {
+    const wish = await this.wishesService.findOne(query);
+    return wish;
+  }
+
+  async deleteWishlist(id) {
+    const deletedWishlist = await this.wishlistRepository.delete({ id });
+    return deletedWishlist;
+  }
 }
