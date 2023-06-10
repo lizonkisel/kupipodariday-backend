@@ -10,7 +10,8 @@ import { Wish } from 'src/wishes/entities/wish.entity';
 
 export class CreateOfferDto {
   @IsNotEmpty()
-  item: Wish;
+  // item: Wish;
+  itemId: number;
 
   @IsNotEmpty()
   @Min(1)

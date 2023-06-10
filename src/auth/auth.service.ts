@@ -27,7 +27,6 @@ export class AuthService {
     /* В идеальном случае пароль обязательно должен быть захэширован */
 
     if (user) {
-      /* Исключаем пароль из результата */
       const isHashValid = await bcrypt.compare(password, user.password);
 
       if (isHashValid) {

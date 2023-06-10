@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Body, Req } from '@nestjs/common';
+import { Controller, UseGuards, Post, Get, Body, Req } from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
@@ -12,5 +12,10 @@ export class OffersController {
   @Post()
   create(@Body() createOfferDto: CreateOfferDto, @Req() req) {
     return this.offersService.createOffer(createOfferDto, req.user);
+  }
+
+  @Get()
+  getAllOffers() {
+    return this.offersService.getAllOffers();
   }
 }

@@ -18,7 +18,7 @@ export class OffersService {
   async createOffer(createOfferDto: CreateOfferDto, user: User) {
     const wish = await this.wishesService.findOne({
       where: {
-        id: createOfferDto.item,
+        id: createOfferDto.itemId,
       },
     });
     if (!wish) {
@@ -31,9 +31,14 @@ export class OffersService {
     const newOffer = await this.offerRepository.create({
       ...createOfferDto,
       user,
+      item: wish,
     });
     await this.offerRepository.insert(newOffer);
 
     return newOffer;
+  }
+
+  async getAllOffers() {
+    this.offerRepository.find({});
   }
 }

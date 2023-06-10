@@ -98,8 +98,8 @@ export class UsersService {
   async findUserByUsername(username: string) {
     const user = await this.userRepository.findOneBy({ username });
 
-    delete user.email;
-    delete user.password;
+    // delete user.email;
+    // delete user.password;
     return user;
   }
 
