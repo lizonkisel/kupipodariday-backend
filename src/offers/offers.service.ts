@@ -39,6 +39,16 @@ export class OffersService {
   }
 
   async getAllOffers() {
-    this.offerRepository.find({});
+    const allOffers = await this.offerRepository.find({
+      relations: {
+        item: {
+          owner: true,
+          offers: true,
+        },
+        user: true,
+        // wishlists: true,
+      },
+    });
+    return allOffers;
   }
 }
