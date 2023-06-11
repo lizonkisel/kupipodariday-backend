@@ -14,17 +14,15 @@ export class AuthService {
 
   auth(user: User) {
     const payload = { sub: user.id };
-    // Вот здесь я добавила { secret: 'jwt_secret' }, пока не очень ясно, зачем. Но работает)
     return {
-      // access_token: this.jwtService.sign(payload, { secret: 'jwt_secret' }),
       access_token: this.jwtService.sign(payload),
     };
   }
 
   async validatePassword(username: string, password: string) {
-    const user = await this.usersService.findUserByUsername(username);
-
-    /* В идеальном случае пароль обязательно должен быть захэширован */
+    const user = await this.usersService.findOne({
+      where: { username: username }
+    });
 
     if (user) {
       const isHashValid = await bcrypt.compare(password, user.password);

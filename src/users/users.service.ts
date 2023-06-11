@@ -4,10 +4,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { User } from './entities/user.entity';
-import { WishesService } from 'src/wishes/wishes.service';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +12,8 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
+
+  /* UTILS */
 
   async findOne(query) {
     const user = await this.userRepository.findOne(query);
@@ -24,11 +23,22 @@ export class UsersService {
   async findOneById(id: number) {
     const user = await this.userRepository.findOneBy({ id });
     return user;
-    // return `This action returns a #${id} user`;
+  }
+
+  deletePassword = (user) => {
+    delete user.password;
+    return user;
+  };
+
+  /* METHODS */
+
+  async getMe(myId) {
+    let me = await this.findOneById(myId);
+    me = this.deletePassword(me);
+    return me;
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    // const sameNameUser = await this.findOne(createUserDto.username);
     const sameNameUser = await this.findOne({
       where: {
         username: createUserDto.username,
@@ -53,20 +63,24 @@ export class UsersService {
     const hash = await bcrypt.hash(createUserDto.password, 10);
     const { password, ...rest } = createUserDto;
     createUserDto.password = hash;
+
     const user = await this.userRepository.create(createUserDto);
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+
+    const userWithoutPassword = this.deletePassword(user);
+    return userWithoutPassword;
   }
 
   async updateUser(updateUserDto, currentUserId) {
-    if (updateUserDto.password) {
-      const hash = await bcrypt.hash(updateUserDto.password, 10);
-      updateUserDto.password = hash;
-    }
-
-    const user = this.findOneById(currentUserId);
+    const user = await this.findOneById(currentUserId);
 
     if (!user) {
       throw new HttpException('Такого пользователя не существует', 404);
+    }
+
+    if (updateUserDto.password) {
+      const hash = await bcrypt.hash(updateUserDto.password, 10);
+      updateUserDto.password = hash;
     }
 
     await this.userRepository.update(currentUserId, updateUserDto);
@@ -83,8 +97,14 @@ export class UsersService {
         wishes: {
           owner: true,
           offers: {
-            user: true,
-            item: true,
+            user: {
+              wishes: true,
+              offers: true,
+              wishlists: {
+                owner: true,
+                items: true,
+              },
+            },
           },
         },
       },
@@ -95,22 +115,41 @@ export class UsersService {
     return wishes;
   }
 
-  async findUserByUsername(username: string) {
-    const user = await this.userRepository.findOneBy({ username });
+  async getUserByUsername(username: string) {
+    let user = await this.findOne({
+      where: { username: username },
+    });
 
-    // delete user.email;
-    // delete user.password;
+    user = this.deletePassword(user);
+    delete user.email;
+
     return user;
   }
 
-  async findWishesByUsername(username: string) {
+  async getWishesByUsername(username: string) {
     const user = await this.findOne({
       where: {
         username: username,
       },
       relations: {
         wishes: {
-          offers: true,
+          offers: {
+            item: {
+              owner: true,
+              offers: true,
+            },
+            user: {
+              wishes: {
+                owner: true,
+                offers: true,
+              },
+              offers: true,
+              wishlists: {
+                owner: true,
+                items: true,
+              },
+            },
+          },
         },
       },
     });

@@ -22,14 +22,7 @@ export class UsersController {
 
   @Get('me')
   getMe(@Req() req): Promise<UserProfileResponseDto> {
-    const user = req.user;
-    delete user.password;
-    return user;
-  }
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
+    return this.usersService.getMe(req.user.id);
   }
 
   @Patch('me')
@@ -46,11 +39,11 @@ export class UsersController {
 
   @Get(':username')
   getUserByUsername(@Param('username') username: string) {
-    return this.usersService.findUserByUsername(username);
+    return this.usersService.getUserByUsername(username);
   }
 
   @Get(':username/wishes')
   getWishesByUsername(@Param('username') username: string) {
-    return this.usersService.findWishesByUsername(username);
+    return this.usersService.getWishesByUsername(username);
   }
 }

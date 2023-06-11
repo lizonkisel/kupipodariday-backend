@@ -80,19 +80,7 @@ export class WishlistsService {
           'Вы можете добавлять только существующие подарки', 400,
         );
       }
-
-      // await this.wishlistRepository.save({id: wishlistId}, {
-      //   ...restUpdateWishlistDto,
-      //   items: storedItems,
-      // });
-      // await this.wishlistRepository.update({id: wishlistId}, {
-      //   ...restUpdateWishlistDto,
-      //   items: storedItems,
-      // });
     }
-    // else {
-    //   await this.wishlistRepository.update(wishlistId, updateWishlistDto);
-    // }
 
     const updatedWishlist = { ...wishlist, ...restUpdateWishlistDto };
 
@@ -101,9 +89,6 @@ export class WishlistsService {
     }
 
     return this.wishlistRepository.save(updatedWishlist);
-
-    // const updatedWishlist = await this.wishlistRepository.findOneBy({ id: wishlistId });
-    // return updatedWishlist;
   }
 
   async deleteWishlist(id) {
