@@ -1,4 +1,14 @@
-import { Controller, UseGuards, Post, Get, Delete, Body, Req, Param } from '@nestjs/common';
+import {
+  Controller,
+  UseGuards,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  Body,
+  Req,
+  Param,
+} from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
@@ -14,21 +24,33 @@ export class WishesController {
     return this.wishesService.create(createWishDto, req.user);
   }
 
+  @Post(':id/copy')
+  copyWish(@Param('id') id: string, @Req() req) {
+    const wishId = id;
+    const currentUserId = req.user.id;
+    return this.wishesService.copyWish(wishId, currentUserId);
+  }
+
   @Get(':id')
   getWishById(@Param('id') id: string) {
-    return this.wishesService.findOne({
-      where: {
-        id: id,
-      },
-      relations: {
-        owner: true,
-        offers: true,
-      },
-    });
+    return this.wishesService.getWishById(id);
+  }
+
+  @Patch(':id')
+  updateWish(
+    @Param('id') id: string,
+    @Req() req,
+    @Body() updateWishDto: UpdateWishDto,
+  ) {
+    const wishId = id;
+    const currentUserId = req.user.id;
+    return this.wishesService.updateWish(wishId, currentUserId, updateWishDto);
   }
 
   @Delete(':id')
-  deleteWishById(@Param('id') id: string) {
-    return this.wishesService.deleteWishById(id);
+  deleteWishById(@Param('id') id: string, @Req() req) {
+    const wishId = id;
+    const currentUserId = req.user.id;
+    return this.wishesService.deleteWishById(wishId, currentUserId);
   }
 }
