@@ -46,4 +46,9 @@ export class UsersController {
   getWishesByUsername(@Param('username') username: string) {
     return this.usersService.getWishesByUsername(username);
   }
+
+  @Post('find')
+  findUsers(@Body() query: string) {
+    return this.usersService.findUsers(query);
+  }
 }

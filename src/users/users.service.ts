@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -155,5 +155,18 @@ export class UsersService {
     });
 
     return user.wishes;
+  }
+
+  async findUsers(query) {
+    const name = query.query;
+    const users = await this.userRepository.find({
+      where: [{ username: Like(`%${name}%`) }, { email: Like(`%${name}%`) }],
+    });
+
+    if (!users) {
+      throw new HttpException('Нет пользователей с такими данными', 404);
+    }
+
+    return users;
   }
 }
