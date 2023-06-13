@@ -21,15 +21,7 @@ export class WishlistsController {
 
   @Get(':id')
   getWishlistById(@Param('id') id: string) {
-    return this.wishlistsService.findOne({
-      where: {
-        id: id,
-      },
-      relations: {
-        owner: true,
-        items: true,
-      },
-    });
+    return this.wishlistsService.getWishlistById(id);
   }
 
   @Patch(':id')

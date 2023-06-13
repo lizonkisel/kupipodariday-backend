@@ -2,11 +2,9 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
-import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { Wishlist } from './entities/wishlist.entity';
 import { User } from 'src/users/entities/user.entity';
 import { WishesService } from 'src/wishes/wishes.service';
-import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Injectable()
 export class WishlistsService {
@@ -16,18 +14,30 @@ export class WishlistsService {
     private readonly wishesService: WishesService,
   ) {}
 
+  async findOne(query) {
+    const wishlist = await this.wishlistRepository.findOne(query);
+    return wishlist;
+  }
+
+  async findWish(query) {
+    const wish = await this.wishesService.findOne(query);
+    return wish;
+  }
+
   async create(createWishlistDto: CreateWishlistDto, owner: User) {
     if (!createWishlistDto.description) {
       createWishlistDto.description = 'Просто вишлист';
     }
 
     const storedItems = await this.wishesService.findMany({
-      where: { id: In(createWishlistDto.itemsId), owner: { id: owner.id } },
+      where:
+        { id: In(createWishlistDto.itemsId), owner: { id: owner.id } },
     });
 
     if (storedItems.length !== createWishlistDto.itemsId.length) {
       throw new HttpException(
-        'Вы можете добавлять только существующие подарки', 400,
+        'Вы можете добавлять только существующие подарки',
+        400,
       );
     }
 
@@ -37,11 +47,6 @@ export class WishlistsService {
       owner: owner,
     });
     return this.wishlistRepository.save(wishlist);
-  }
-
-  async findWish(query) {
-    const wish = await this.wishesService.findOne(query);
-    return wish;
   }
 
   async getAllWishlists() {
@@ -54,8 +59,21 @@ export class WishlistsService {
     return allWishlists;
   }
 
-  async findOne(query) {
-    const wishlist = await this.wishlistRepository.findOne(query);
+  async getWishlistById(id) {
+    const wishlist = await this.wishlistRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        owner: true,
+        items: true,
+      },
+    });
+
+    if (!wishlist) {
+      throw new HttpException('Вишоиста с таким id не существует', 404);
+    }
+
     return wishlist;
   }
 
@@ -77,7 +95,8 @@ export class WishlistsService {
 
       if (storedItems.length !== updateWishlistDto.itemsId.length) {
         throw new HttpException(
-          'Вы можете добавлять только существующие подарки', 400,
+          'Вы можете добавлять только существующие подарки',
+          400,
         );
       }
     }

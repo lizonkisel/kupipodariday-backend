@@ -41,6 +41,6 @@ export class Wishlist {
 
   @ManyToMany(() => Wish)
   @JoinTable()
-  // items: Wish[];
-  items: any;
+  items: Wish[];
+  // items: any;
 }
