@@ -29,8 +29,9 @@ export class Offer {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @IsOptional()
   @ManyToOne(() => User, (user) => user.offers)
-  user: User;
+  user?: User;
 
   @ManyToOne(() => Wish, (wish) => wish.offers)
   item: Wish;

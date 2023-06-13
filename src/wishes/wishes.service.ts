@@ -183,4 +183,14 @@ export class WishesService {
 
     return newWish;
   }
+
+  async updateRaisedField(wish, amount) {
+    const newRaised = wish.raised + amount;
+    const newWish = await this.wishRepository.save({
+      ...wish,
+      raised: newRaised,
+    });
+    console.log(newWish);
+    return newWish;
+  }
 }

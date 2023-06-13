@@ -16,9 +16,14 @@ export class OffersService {
   ) {}
 
   async createOffer(createOfferDto: CreateOfferDto, user: User) {
+    const { amount, itemId, hidden } = createOfferDto;
+
     const wish = await this.wishesService.findOne({
       where: {
-        id: createOfferDto.itemId,
+        id: itemId,
+      },
+      relations: {
+        owner: true,
       },
     });
     if (!wish) {
@@ -28,10 +33,41 @@ export class OffersService {
       );
     }
 
+    if (wish.owner.id === user.id) {
+      throw new HttpException('Нельзя скинуться на собственный подарок', 403);
+    }
+
+    if (wish.raised >= wish.price) {
+      throw new HttpException('Вся сумма на подарок уже собрана', 403);
+    }
+
+    if ((wish.price - wish.raised) < amount) {
+      throw new HttpException(
+        'Сумма вашего вклада превышает недостающую стоимость подарка',
+        403,
+      );
+    }
+
+    const updatedWish = await this.wishesService.updateRaisedField(wish, amount);
+
+    let finalOfferDto;
+    if (hidden) {
+      finalOfferDto = {
+        amount,
+        item: updatedWish,
+        hidden,
+      };
+    } else {
+      finalOfferDto = {
+        amount,
+        item: updatedWish,
+        user: user,
+        hidden,
+      };
+    }
+
     const newOffer = await this.offerRepository.create({
-      ...createOfferDto,
-      user,
-      item: wish,
+      ...finalOfferDto,
     });
     await this.offerRepository.insert(newOffer);
 
@@ -45,11 +81,51 @@ export class OffersService {
           owner: true,
           offers: true,
         },
-        user: true,
-        // wishlists: true,
+        user: {
+          wishes: {
+            owner: true,
+            offers: true,
+          },
+          offers: true,
+          wishlists: {
+            owner: true,
+            items: true,
+          },
+        },
       },
     });
     return allOffers;
+  }
+
+  async getOfferById(id) {
+    const offer = await this.offerRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        item: {
+          owner: true,
+          offers: true,
+        },
+        user: {
+          wishes: {
+            owner: true,
+            offers: true,
+          },
+          offers: true,
+          wishlists: {
+            owner: true,
+            items: true,
+          },
+        },
+      },
+    });
+
+    if (!offer) {
+      throw new HttpException('Нет оффера с таким id', 404);
+    }
+
+    return offer;
   }
 
   async findOne(query) {

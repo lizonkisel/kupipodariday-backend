@@ -21,18 +21,6 @@ export class OffersController {
 
   @Get(':id')
   getOfferById(@Param('id') id: string) {
-    return this.offersService.findOne({
-      where: {
-        id: id,
-      },
-      relations: {
-        item: {
-          owner: true,
-          offers: true,
-        },
-        user: true,
-        // wishlists: true,
-      },
-    });
+    return this.offersService.getOfferById(id);
   }
 }
