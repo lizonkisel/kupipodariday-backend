@@ -19,6 +19,16 @@ import { JwtGuard } from 'src/guards/jwt-guard';
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 
+  @Get('last')
+  getLast() {
+    return this.wishesService.getLast();
+  }
+
+  @Get('top')
+  getTop() {
+    return this.wishesService.getTop();
+  }
+
   @Post()
   createWish(@Body() createWishDto: CreateWishDto, @Req() req) {
     return this.wishesService.create(createWishDto, req.user);

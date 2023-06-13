@@ -1,6 +1,7 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { UnauthorizedException } from 'src/errors/errors';
 
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -32,9 +33,8 @@ export class AuthService {
 
         return user;
       } else {
-        throw new HttpException(
+        throw new UnauthorizedException(
           'Нет такого пользователя или пароль неверен',
-          401,
         );
       }
     }

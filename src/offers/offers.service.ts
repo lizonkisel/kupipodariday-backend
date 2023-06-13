@@ -1,11 +1,11 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
 import { Offer } from './entities/offer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { WishesService } from 'src/wishes/wishes.service';
+import { ForbiddenException, NotFoundException } from 'src/errors/errors';
 
 @Injectable()
 export class OffersService {
@@ -27,24 +27,22 @@ export class OffersService {
       },
     });
     if (!wish) {
-      throw new HttpException(
+      throw new NotFoundException(
         'Нельзя скинуться на несуществующий подарок',
-        404,
       );
     }
 
     if (wish.owner.id === user.id) {
-      throw new HttpException('Нельзя скинуться на собственный подарок', 403);
+      throw new ForbiddenException('Нельзя скинуться на собственный подарок');
     }
 
     if (wish.raised >= wish.price) {
-      throw new HttpException('Вся сумма на подарок уже собрана', 403);
+      throw new ForbiddenException('Вся сумма на подарок уже собрана');
     }
 
     if ((wish.price - wish.raised) < amount) {
-      throw new HttpException(
+      throw new ForbiddenException(
         'Сумма вашего вклада превышает недостающую стоимость подарка',
-        403,
       );
     }
 
@@ -122,7 +120,7 @@ export class OffersService {
     });
 
     if (!offer) {
-      throw new HttpException('Нет оффера с таким id', 404);
+      throw new NotFoundException('Нет оффера с таким id');
     }
 
     return offer;

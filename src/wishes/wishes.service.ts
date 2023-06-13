@@ -1,10 +1,11 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { Wish } from './entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { ForbiddenException, NotFoundException } from 'src/errors/errors';
 
 @Injectable()
 export class WishesService {
@@ -64,7 +65,7 @@ export class WishesService {
     });
 
     if (!wish) {
-      throw new HttpException('Желания с таким id не существует', 404);
+      throw new NotFoundException('Желания с таким id не существует');
     }
 
     return wish;
@@ -82,20 +83,18 @@ export class WishesService {
     });
 
     if (!wish) {
-      throw new HttpException('Такого подарка не сущетсвует', 404);
+      throw new NotFoundException('Такого подарка не сущетсвует');
     }
 
     if (wish.owner.id !== currentUserId) {
-      throw new HttpException(
+      throw new ForbiddenException(
         'Вы не можете редактировать подарок другого пользователя',
-        403,
       );
     }
 
     if (wish.offers.length !== 0 && wish.raised !== 0) {
-      throw new HttpException(
+      throw new ForbiddenException(
         'Вы не можете редактировать подарок, на который уже скинулись',
-        403,
       );
     }
 
@@ -112,20 +111,18 @@ export class WishesService {
       },
     });
     if (!wish) {
-      throw new HttpException('Желания с таким id не существует', 404);
+      throw new NotFoundException('Желания с таким id не существует');
     }
 
     if (wish.owner.id !== currentUserId) {
-      throw new HttpException(
+      throw new ForbiddenException(
         'Вы не можете удалить подарок другого пользователя',
-        403,
       );
     }
 
     if (wish.offers.length !== 0 && wish.raised !== 0) {
-      throw new HttpException(
+      throw new ForbiddenException(
         'Вы не можете удалить подарок, на который уже скинулись',
-        403,
       );
     }
 
@@ -144,15 +141,14 @@ export class WishesService {
     });
 
     if (!originalWish) {
-      throw new HttpException('Желания с таким id не существует', 404);
+      throw new NotFoundException('Желания с таким id не существует');
     }
 
     const wishOwnerId = originalWish.owner.id;
 
     if (wishOwnerId === currentUserId) {
-      throw new HttpException(
+      throw new ForbiddenException(
         'Нельзя копировать своё собственное желание',
-        403,
       );
     }
 
@@ -192,5 +188,53 @@ export class WishesService {
     });
     console.log(newWish);
     return newWish;
+  }
+
+  async getLast() {
+    const lastWishes = await this.findMany({
+      relations: {
+        owner: true,
+        offers: {
+          user: {
+            wishes: true,
+            offers: true,
+            wishlists: {
+              owner: true,
+              items: true,
+            },
+          },
+        },
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+      take: 40,
+    });
+
+    return lastWishes;
+  }
+
+  async getTop() {
+    const topWishes = await this.findMany({
+      relations: {
+        owner: true,
+        offers: {
+          user: {
+            wishes: true,
+            offers: true,
+            wishlists: {
+              owner: true,
+              items: true,
+            },
+          },
+        },
+      },
+      order: {
+        copied: 'DESC',
+      },
+      take: 20,
+    });
+
+    return topWishes;
   }
 }

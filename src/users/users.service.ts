@@ -1,10 +1,11 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
+import { ConflictException, NotFoundException } from 'src/errors/errors';
 
 @Injectable()
 export class UsersService {
@@ -45,10 +46,7 @@ export class UsersService {
       },
     });
     if (sameNameUser) {
-      throw new HttpException(
-        'Пользователь с таким именем уже существует',
-        409,
-      );
+      throw new ConflictException('Пользователь с таким именем уже существует');
     }
 
     const sameEmailUser = await this.findOne({
@@ -57,7 +55,7 @@ export class UsersService {
       },
     });
     if (sameEmailUser) {
-      throw new HttpException('Пользователь с таким email уже существует', 409);
+      throw new ConflictException('Пользователь с таким именем уже существует');
     }
 
     const hash = await bcrypt.hash(createUserDto.password, 10);
@@ -75,7 +73,7 @@ export class UsersService {
     const user = await this.findOneById(currentUserId);
 
     if (!user) {
-      throw new HttpException('Такого пользователя не существует', 404);
+      throw new NotFoundException('Такого пользователя не существует');
     }
 
     if (updateUserDto.password) {
@@ -164,7 +162,7 @@ export class UsersService {
     });
 
     if (!users) {
-      throw new HttpException('Нет пользователей с такими данными', 404);
+      throw new NotFoundException('Нет пользователей с такими данными');
     }
 
     return users;

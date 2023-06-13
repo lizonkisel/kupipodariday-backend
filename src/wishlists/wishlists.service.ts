@@ -1,10 +1,11 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { Wishlist } from './entities/wishlist.entity';
 import { User } from 'src/users/entities/user.entity';
 import { WishesService } from 'src/wishes/wishes.service';
+import { BadRequestException, NotFoundException } from 'src/errors/errors';
 
 @Injectable()
 export class WishlistsService {
@@ -35,9 +36,8 @@ export class WishlistsService {
     });
 
     if (storedItems.length !== createWishlistDto.itemsId.length) {
-      throw new HttpException(
+      throw new BadRequestException(
         'Вы можете добавлять только существующие подарки',
-        400,
       );
     }
 
@@ -71,7 +71,7 @@ export class WishlistsService {
     });
 
     if (!wishlist) {
-      throw new HttpException('Вишоиста с таким id не существует', 404);
+      throw new NotFoundException('Вишлиста с таким id не существует');
     }
 
     return wishlist;
@@ -81,7 +81,7 @@ export class WishlistsService {
     const wishlist = await this.wishlistRepository.findOneBy({ id: wishlistId });
 
     if (!wishlist) {
-      throw new HttpException('Нельзя отредактировать несуществующий вишлист', 404);
+      throw new NotFoundException('Нельзя отредактировать несуществующий вишлист');
     }
 
     const { itemsId, ...restUpdateWishlistDto } = updateWishlistDto;
@@ -94,9 +94,8 @@ export class WishlistsService {
       });
 
       if (storedItems.length !== updateWishlistDto.itemsId.length) {
-        throw new HttpException(
+        throw new BadRequestException(
           'Вы можете добавлять только существующие подарки',
-          400,
         );
       }
     }
