@@ -31,6 +31,8 @@ export class WishlistsService {
   }
 
   async create(createWishlistDto: CreateWishlistDto, owner: User) {
+    delete owner.password;
+    delete owner.email;
     if (!createWishlistDto.description) {
       createWishlistDto.description = 'Просто вишлист';
     }
@@ -63,6 +65,13 @@ export class WishlistsService {
         items: true,
       },
     });
+
+    allWishlists.map((wishlist) => {
+      delete wishlist.owner.password;
+      delete wishlist.owner.email;
+      return wishlist;
+    });
+
     return allWishlists;
   }
 
@@ -80,6 +89,9 @@ export class WishlistsService {
     if (!wishlist) {
       throw new NotFoundException('Вишлиста с таким id не существует');
     }
+
+    delete wishlist.owner.password;
+    delete wishlist.owner.email;
 
     return wishlist;
   }

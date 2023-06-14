@@ -111,6 +111,12 @@ export class UsersService {
 
     const wishes = user.wishes;
 
+    wishes.map((wish) => {
+      delete wish.owner.password;
+      delete wish.owner.email;
+      return wish;
+    });
+
     return wishes;
   }
 
@@ -165,6 +171,12 @@ export class UsersService {
     if (!users) {
       throw new NotFoundException('Нет пользователей с такими данными');
     }
+
+    users.map((user) => {
+      delete user.password;
+      delete user.email;
+      return user;
+    });
 
     return users;
   }

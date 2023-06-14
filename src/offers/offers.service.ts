@@ -49,6 +49,13 @@ export class OffersService {
       amount,
     );
 
+    // const finalOfferDto = {
+    //   amount,
+    //   item: updatedWish,
+    //   user: user,
+    //   hidden,
+    // };
+
     let finalOfferDto;
     if (hidden) {
       finalOfferDto = {
@@ -63,14 +70,18 @@ export class OffersService {
         user: user,
         hidden,
       };
+      delete finalOfferDto.user.password;
+      delete finalOfferDto.user.email;
     }
 
     const newOffer = await this.offerRepository.create({
       ...finalOfferDto,
     });
-    await this.offerRepository.insert(newOffer);
 
-    return newOffer;
+    return await this.offerRepository.insert(newOffer);
+    // await this.offerRepository.insert(newOffer);
+
+    // return newOffer;
   }
 
   async getAllOffers() {
@@ -93,6 +104,13 @@ export class OffersService {
         },
       },
     });
+
+    allOffers.map((offer) => {
+      delete offer.item.owner.password;
+      delete offer.item.owner.email;
+      return offer;
+    });
+
     return allOffers;
   }
 
@@ -123,6 +141,12 @@ export class OffersService {
     if (!offer) {
       throw new NotFoundException('Нет оффера с таким id');
     }
+
+    delete offer.item.owner.password;
+    delete offer.item.owner.email;
+
+    delete offer.user.password;
+    delete offer.user.email;
 
     return offer;
   }

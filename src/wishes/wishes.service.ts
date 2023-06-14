@@ -36,6 +36,8 @@ export class WishesService {
   /* METHODS */
 
   async create(createWishDto: CreateWishDto, owner: User) {
+    delete owner.password;
+    delete owner.email;
     const newWish = await this.wishRepository.create({
       ...createWishDto,
       owner,
@@ -46,7 +48,7 @@ export class WishesService {
   }
 
   async getWishById(id: number) {
-    const wish = this.findOne({
+    const wish = await this.findOne({
       where: {
         id: id,
       },
@@ -68,6 +70,9 @@ export class WishesService {
     if (!wish) {
       throw new NotFoundException('Желания с таким id не существует');
     }
+
+    delete wish.owner.password;
+    delete wish.owner.email;
 
     return wish;
   }
@@ -131,8 +136,7 @@ export class WishesService {
       );
     }
 
-    await this.deleteOne(wishId);
-    return wish;
+    return await this.deleteOne(wishId);
   }
 
   async copyWish(wishId: number, currentUserId: number) {
@@ -216,6 +220,12 @@ export class WishesService {
       take: 40,
     });
 
+    lastWishes.map((wish) => {
+      delete wish.owner.password;
+      delete wish.owner.email;
+      return wish;
+    });
+
     return lastWishes;
   }
 
@@ -238,6 +248,12 @@ export class WishesService {
         copied: 'DESC',
       },
       take: 20,
+    });
+
+    topWishes.map((wish) => {
+      delete wish.owner.password;
+      delete wish.owner.email;
+      return wish;
     });
 
     return topWishes;
