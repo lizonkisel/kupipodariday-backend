@@ -47,7 +47,7 @@ export class OffersService {
       throw new ForbiddenException('Вся сумма на подарок уже собрана');
     }
 
-    if ((wish.price - wish.raised) < amount) {
+    if (wish.price - wish.raised < amount) {
       throw new ForbiddenException(
         'Сумма вашего вклада превышает недостающую стоимость подарка',
       );

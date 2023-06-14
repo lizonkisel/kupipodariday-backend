@@ -5,13 +5,11 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
   Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtGuard } from '../guards/jwt-guard';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { IUserRequest } from 'src/utils/types/user-request';

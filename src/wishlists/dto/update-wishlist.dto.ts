@@ -1,11 +1,4 @@
-import {
-  Length,
-  Min,
-  IsUrl,
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-} from 'class-validator';
+import { Length, IsUrl, IsOptional } from 'class-validator';
 
 import { PartialType } from '@nestjs/swagger';
 import { CreateWishlistDto } from './create-wishlist.dto';

@@ -1,10 +1,4 @@
-import {
-  Length,
-  IsUrl,
-  IsEmail,
-  IsEmpty,
-  IsOptional,
-} from 'class-validator';
+import { Length, IsUrl, IsEmail, IsOptional } from 'class-validator';
 import { PartialType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
 

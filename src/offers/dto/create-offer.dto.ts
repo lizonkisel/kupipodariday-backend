@@ -1,16 +1,7 @@
-import {
-  Length,
-  Min,
-  IsUrl,
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-} from 'class-validator';
-import { Wish } from 'src/wishes/entities/wish.entity';
+import { Min, IsNotEmpty } from 'class-validator';
 
 export class CreateOfferDto {
   @IsNotEmpty()
-  // item: Wish;
   itemId: number;
 
   @IsNotEmpty()

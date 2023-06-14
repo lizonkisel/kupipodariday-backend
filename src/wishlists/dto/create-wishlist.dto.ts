@@ -1,12 +1,4 @@
-import {
-  Length,
-  Min,
-  IsUrl,
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-} from 'class-validator';
-import { Wish } from 'src/wishes/entities/wish.entity';
+import { Length, IsUrl, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateWishlistDto {
   @IsNotEmpty()
@@ -22,6 +14,5 @@ export class CreateWishlistDto {
   image: string;
 
   @IsNotEmpty()
-  // itemsId: Wish[];
   itemsId: number[];
 }

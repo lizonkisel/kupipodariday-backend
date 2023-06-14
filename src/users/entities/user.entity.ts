@@ -17,7 +17,6 @@ import {
 import { Offer } from 'src/offers/entities/offer.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -50,7 +49,6 @@ export class User {
   @IsNotEmpty()
   email: string;
 
-  // @Column({ select: false })
   @Column()
   @IsNotEmpty()
   password: string;
@@ -60,10 +58,8 @@ export class User {
 
   @OneToMany(() => Offer, (offer) => offer.user)
   offers: Offer[];
-  // содержит список подарков, на которые скидывается пользователь. Установите для него подходящий тип связи.
 
   // @Column()
   @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
   wishlists: Wishlist[];
-  // // содержит список вишлистов, которые создал пользователь. Установите для него подходящий тип связи.
 }
