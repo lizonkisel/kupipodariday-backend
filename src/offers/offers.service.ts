@@ -15,6 +15,15 @@ export class OffersService {
     private readonly wishesService: WishesService,
   ) {}
 
+  /* UTILS */
+
+  async findOne(query: FindOneOptions<Offer>) {
+    const offer = await this.offerRepository.findOne(query);
+    return offer;
+  }
+
+  /* METHODS */
+
   async createOffer(createOfferDto: CreateOfferDto, user: User) {
     const { amount, itemId, hidden } = createOfferDto;
 
@@ -148,11 +157,6 @@ export class OffersService {
     delete offer.user.password;
     delete offer.user.email;
 
-    return offer;
-  }
-
-  async findOne(query: FindOneOptions<Offer>) {
-    const offer = await this.offerRepository.findOne(query);
     return offer;
   }
 }

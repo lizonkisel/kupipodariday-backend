@@ -195,7 +195,6 @@ export class WishesService {
       ...wish,
       raised: newRaised,
     });
-    console.log(newWish);
     return newWish;
   }
 

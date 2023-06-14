@@ -20,6 +20,8 @@ export class WishlistsService {
     private readonly wishesService: WishesService,
   ) {}
 
+  /* UTILS */
+
   async findOne(query: FindOneOptions<Wishlist>) {
     const wishlist = await this.wishlistRepository.findOne(query);
     return wishlist;
@@ -29,6 +31,8 @@ export class WishlistsService {
     const wish = await this.wishesService.findOne(query);
     return wish;
   }
+
+  /* METHODS */
 
   async create(createWishlistDto: CreateWishlistDto, owner: User) {
     delete owner.password;
