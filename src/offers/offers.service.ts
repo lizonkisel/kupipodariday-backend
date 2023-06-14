@@ -44,7 +44,10 @@ export class OffersService {
       );
     }
 
-    const updatedWish = await this.wishesService.updateRaisedField(wish, amount);
+    const updatedWish = await this.wishesService.updateRaisedField(
+      wish,
+      amount,
+    );
 
     let finalOfferDto;
     if (hidden) {
@@ -93,7 +96,7 @@ export class OffersService {
     return allOffers;
   }
 
-  async getOfferById(id) {
+  async getOfferById(id: number) {
     const offer = await this.offerRepository.findOne({
       where: {
         id: id,

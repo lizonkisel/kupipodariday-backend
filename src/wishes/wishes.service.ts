@@ -28,7 +28,7 @@ export class WishesService {
     return wishes;
   }
 
-  async deleteOne(id) {
+  async deleteOne(id: number) {
     const deletedWish = await this.wishRepository.delete({ id });
     return deletedWish;
   }
@@ -45,7 +45,7 @@ export class WishesService {
     return newWish;
   }
 
-  async getWishById(id) {
+  async getWishById(id: number) {
     const wish = this.findOne({
       where: {
         id: id,
@@ -72,7 +72,11 @@ export class WishesService {
     return wish;
   }
 
-  async updateWish(wishId, currentUserId, updateWishDto: UpdateWishDto) {
+  async updateWish(
+    wishId: number,
+    currentUserId: number,
+    updateWishDto: UpdateWishDto,
+  ) {
     const wish = await this.findOne({
       where: {
         id: wishId,
@@ -103,7 +107,7 @@ export class WishesService {
     return updatedWish;
   }
 
-  async deleteWishById(wishId, currentUserId) {
+  async deleteWishById(wishId: number, currentUserId: number) {
     const wish = await this.findOne({
       where: { id: wishId },
       relations: {
@@ -131,7 +135,7 @@ export class WishesService {
     return wish;
   }
 
-  async copyWish(wishId, currentUserId) {
+  async copyWish(wishId: number, currentUserId: number) {
     const originalWish = await this.findOne({
       where: {
         id: wishId,

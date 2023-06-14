@@ -5,7 +5,10 @@ import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { Wishlist } from './entities/wishlist.entity';
 import { User } from 'src/users/entities/user.entity';
 import { WishesService } from 'src/wishes/wishes.service';
-import { BadRequestException, NotFoundException } from 'src/utils/errors/errors';
+import {
+  BadRequestException,
+  NotFoundException,
+} from 'src/utils/errors/errors';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 
@@ -32,12 +35,14 @@ export class WishlistsService {
       createWishlistDto.description = 'Просто вишлист';
     }
 
-    const storedItems = await this.wishesService.findMany({
-      where:
-        { id: In(createWishlistDto.itemsId), owner: { id: owner.id } },
+    const chosenItems = await this.wishesService.findMany({
+      where: {
+        id: In(createWishlistDto.itemsId),
+        owner: { id: owner.id },
+      },
     });
 
-    if (storedItems.length !== createWishlistDto.itemsId.length) {
+    if (chosenItems.length !== createWishlistDto.itemsId.length) {
       throw new BadRequestException(
         'Вы можете добавлять только существующие подарки',
       );
@@ -45,7 +50,7 @@ export class WishlistsService {
 
     const wishlist = this.wishlistRepository.create({
       ...createWishlistDto,
-      items: storedItems,
+      items: chosenItems,
       owner: owner,
     });
     return this.wishlistRepository.save(wishlist);
@@ -61,7 +66,7 @@ export class WishlistsService {
     return allWishlists;
   }
 
-  async getWishlistById(id) {
+  async getWishlistById(id: number) {
     const wishlist = await this.wishlistRepository.findOne({
       where: {
         id: id,
@@ -81,25 +86,32 @@ export class WishlistsService {
 
   async updateWishlistById(
     updateWishlistDto: UpdateWishlistDto,
-    wishlistId,
-    ownerId,
+    wishlistId: number,
+    ownerId: number,
   ) {
-    const wishlist = await this.wishlistRepository.findOneBy({ id: wishlistId });
+    const wishlist = await this.wishlistRepository.findOneBy({
+      id: wishlistId,
+    });
 
     if (!wishlist) {
-      throw new NotFoundException('Нельзя отредактировать несуществующий вишлист');
+      throw new NotFoundException(
+        'Нельзя отредактировать несуществующий вишлист',
+      );
     }
 
     const { itemsId, ...restUpdateWishlistDto } = updateWishlistDto;
 
-    let storedItems;
+    let chosenItems: Wish[];
 
     if (itemsId) {
-      storedItems = await this.wishesService.findMany({
-        where: { id: In(updateWishlistDto.itemsId), owner: { id: ownerId } },
+      chosenItems = await this.wishesService.findMany({
+        where: {
+          id: In(updateWishlistDto.itemsId),
+          owner: { id: ownerId },
+        },
       });
 
-      if (storedItems.length !== updateWishlistDto.itemsId.length) {
+      if (chosenItems.length !== updateWishlistDto.itemsId.length) {
         throw new BadRequestException(
           'Вы можете добавлять только существующие подарки',
         );
@@ -108,14 +120,14 @@ export class WishlistsService {
 
     const updatedWishlist = { ...wishlist, ...restUpdateWishlistDto };
 
-    if (storedItems) {
-      updatedWishlist.items = storedItems;
+    if (chosenItems) {
+      updatedWishlist.items = chosenItems;
     }
 
     return this.wishlistRepository.save(updatedWishlist);
   }
 
-  async deleteWishlist(id) {
+  async deleteWishlist(id: number) {
     const deletedWishlist = await this.wishlistRepository.delete({ id });
     return deletedWishlist;
   }

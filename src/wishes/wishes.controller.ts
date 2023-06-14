@@ -36,20 +36,20 @@ export class WishesController {
   }
 
   @Post(':id/copy')
-  copyWish(@Param('id') id: string, @Req() req: IUserRequest) {
+  copyWish(@Param('id') id: number, @Req() req: IUserRequest) {
     const wishId = id;
     const currentUserId = req.user.id;
     return this.wishesService.copyWish(wishId, currentUserId);
   }
 
   @Get(':id')
-  getWishById(@Param('id') id: string) {
+  getWishById(@Param('id') id: number) {
     return this.wishesService.getWishById(id);
   }
 
   @Patch(':id')
   updateWish(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() req: IUserRequest,
     @Body() updateWishDto: UpdateWishDto,
   ) {
@@ -59,7 +59,7 @@ export class WishesController {
   }
 
   @Delete(':id')
-  deleteWishById(@Param('id') id: string, @Req() req: IUserRequest) {
+  deleteWishById(@Param('id') id: number, @Req() req: IUserRequest) {
     const wishId = id;
     const currentUserId = req.user.id;
     return this.wishesService.deleteWishById(wishId, currentUserId);

@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { ConflictException, NotFoundException } from 'src/utils/errors/errors';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -33,7 +34,7 @@ export class UsersService {
 
   /* METHODS */
 
-  async getMe(myId) {
+  async getMe(myId: number) {
     let me = await this.findOneById(myId);
     me = this.deletePassword(me);
     return me;
@@ -69,7 +70,7 @@ export class UsersService {
     return userWithoutPassword;
   }
 
-  async updateUser(updateUserDto, currentUserId) {
+  async updateUser(updateUserDto: UpdateUserDto, currentUserId: number) {
     const user = await this.findOneById(currentUserId);
 
     if (!user) {
@@ -88,7 +89,7 @@ export class UsersService {
     return userWithoutPassword;
   }
 
-  async getMyWishes(currentUserId) {
+  async getMyWishes(currentUserId: number) {
     const user = await this.findOne({
       where: { id: currentUserId },
       relations: {
