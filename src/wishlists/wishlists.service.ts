@@ -7,6 +7,7 @@ import { User } from 'src/users/entities/user.entity';
 import { WishesService } from 'src/wishes/wishes.service';
 import {
   BadRequestException,
+  ForbiddenException,
   NotFoundException,
 } from 'src/utils/errors/errors';
 import { Wish } from 'src/wishes/entities/wish.entity';
@@ -105,13 +106,24 @@ export class WishlistsService {
     wishlistId: number,
     ownerId: number,
   ) {
-    const wishlist = await this.wishlistRepository.findOneBy({
-      id: wishlistId,
+    const wishlist = await this.wishlistRepository.findOne({
+      where: {
+        id: wishlistId,
+      },
+      relations: {
+        owner: true,
+      },
     });
 
     if (!wishlist) {
       throw new NotFoundException(
         'Нельзя отредактировать несуществующий вишлист',
+      );
+    }
+
+    if (wishlist.owner.id !== ownerId) {
+      throw new ForbiddenException(
+        'Нельзя отредактировать вишлист другого пользователя',
       );
     }
 
@@ -139,6 +151,9 @@ export class WishlistsService {
     if (chosenItems) {
       updatedWishlist.items = chosenItems;
     }
+
+    delete updatedWishlist.owner.password;
+    delete updatedWishlist.owner.email;
 
     return this.wishlistRepository.save(updatedWishlist);
   }
