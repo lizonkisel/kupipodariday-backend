@@ -3,6 +3,7 @@ import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtGuard } from 'src/guards/jwt-guard';
+import { IUserRequest } from 'src/utils/types/user-request';
 
 @UseGuards(JwtGuard)
 @Controller('wishlists')
@@ -10,7 +11,10 @@ export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
 
   @Post()
-  create(@Body() createWishlistDto: CreateWishlistDto, @Req() req) {
+  create(
+    @Body() createWishlistDto: CreateWishlistDto,
+    @Req() req: IUserRequest,
+  ) {
     return this.wishlistsService.create(createWishlistDto, req.user);
   }
 
@@ -25,7 +29,11 @@ export class WishlistsController {
   }
 
   @Patch(':id')
-  updateWishlistById(@Body() updateWishlistDto: UpdateWishlistDto, @Param('id') id: string, @Req() req) {
+  updateWishlistById(
+    @Body() updateWishlistDto: UpdateWishlistDto,
+    @Param('id') id: string,
+    @Req() req: IUserRequest,
+  ) {
     return this.wishlistsService.updateWishlistById(updateWishlistDto, id, req.user.id);
   }
 

@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, FindOneOptions } from 'typeorm';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { Wishlist } from './entities/wishlist.entity';
 import { User } from 'src/users/entities/user.entity';
 import { WishesService } from 'src/wishes/wishes.service';
-import { BadRequestException, NotFoundException } from 'src/errors/errors';
+import { BadRequestException, NotFoundException } from 'src/utils/errors/errors';
+import { Wish } from 'src/wishes/entities/wish.entity';
+import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 
 @Injectable()
 export class WishlistsService {
@@ -15,12 +17,12 @@ export class WishlistsService {
     private readonly wishesService: WishesService,
   ) {}
 
-  async findOne(query) {
+  async findOne(query: FindOneOptions<Wishlist>) {
     const wishlist = await this.wishlistRepository.findOne(query);
     return wishlist;
   }
 
-  async findWish(query) {
+  async findWish(query: FindOneOptions<Wish>) {
     const wish = await this.wishesService.findOne(query);
     return wish;
   }
@@ -77,7 +79,11 @@ export class WishlistsService {
     return wishlist;
   }
 
-  async updateWishlistById(updateWishlistDto, wishlistId, ownerId) {
+  async updateWishlistById(
+    updateWishlistDto: UpdateWishlistDto,
+    wishlistId,
+    ownerId,
+  ) {
     const wishlist = await this.wishlistRepository.findOneBy({ id: wishlistId });
 
     if (!wishlist) {

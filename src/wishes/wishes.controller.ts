@@ -13,6 +13,7 @@ import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { JwtGuard } from 'src/guards/jwt-guard';
+import { IUserRequest } from 'src/utils/types/user-request';
 
 @UseGuards(JwtGuard)
 @Controller('wishes')
@@ -30,12 +31,12 @@ export class WishesController {
   }
 
   @Post()
-  createWish(@Body() createWishDto: CreateWishDto, @Req() req) {
+  createWish(@Body() createWishDto: CreateWishDto, @Req() req: IUserRequest) {
     return this.wishesService.create(createWishDto, req.user);
   }
 
   @Post(':id/copy')
-  copyWish(@Param('id') id: string, @Req() req) {
+  copyWish(@Param('id') id: string, @Req() req: IUserRequest) {
     const wishId = id;
     const currentUserId = req.user.id;
     return this.wishesService.copyWish(wishId, currentUserId);
@@ -49,7 +50,7 @@ export class WishesController {
   @Patch(':id')
   updateWish(
     @Param('id') id: string,
-    @Req() req,
+    @Req() req: IUserRequest,
     @Body() updateWishDto: UpdateWishDto,
   ) {
     const wishId = id;
@@ -58,7 +59,7 @@ export class WishesController {
   }
 
   @Delete(':id')
-  deleteWishById(@Param('id') id: string, @Req() req) {
+  deleteWishById(@Param('id') id: string, @Req() req: IUserRequest) {
     const wishId = id;
     const currentUserId = req.user.id;
     return this.wishesService.deleteWishById(wishId, currentUserId);

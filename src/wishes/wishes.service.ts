@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { Wish } from './entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { ForbiddenException, NotFoundException } from 'src/errors/errors';
+import { ForbiddenException, NotFoundException } from 'src/utils/errors/errors';
+import { UpdateWishDto } from './dto/update-wish.dto';
 
 @Injectable()
 export class WishesService {
@@ -17,12 +18,12 @@ export class WishesService {
 
   /* UTILS */
 
-  async findOne(query) {
+  async findOne(query: FindOneOptions<Wish>) {
     const wish = await this.wishRepository.findOne(query);
     return wish;
   }
 
-  async findMany(query) {
+  async findMany(query: FindManyOptions<Wish>) {
     const wishes = await this.wishRepository.find(query);
     return wishes;
   }
@@ -71,7 +72,7 @@ export class WishesService {
     return wish;
   }
 
-  async updateWish(wishId, currentUserId, updateWishDto) {
+  async updateWish(wishId, currentUserId, updateWishDto: UpdateWishDto) {
     const wish = await this.findOne({
       where: {
         id: wishId,
@@ -180,7 +181,7 @@ export class WishesService {
     return newWish;
   }
 
-  async updateRaisedField(wish, amount) {
+  async updateRaisedField(wish: Wish, amount: number) {
     const newRaised = wish.raised + amount;
     const newWish = await this.wishRepository.save({
       ...wish,

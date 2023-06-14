@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { Offer } from './entities/offer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { WishesService } from 'src/wishes/wishes.service';
-import { ForbiddenException, NotFoundException } from 'src/errors/errors';
+import { ForbiddenException, NotFoundException } from 'src/utils/errors/errors';
 
 @Injectable()
 export class OffersService {
@@ -27,9 +27,7 @@ export class OffersService {
       },
     });
     if (!wish) {
-      throw new NotFoundException(
-        'Нельзя скинуться на несуществующий подарок',
-      );
+      throw new NotFoundException('Нельзя скинуться на несуществующий подарок');
     }
 
     if (wish.owner.id === user.id) {
@@ -126,7 +124,7 @@ export class OffersService {
     return offer;
   }
 
-  async findOne(query) {
+  async findOne(query: FindOneOptions<Offer>) {
     const offer = await this.offerRepository.findOne(query);
     return offer;
   }

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Like, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
-import { ConflictException, NotFoundException } from 'src/errors/errors';
+import { ConflictException, NotFoundException } from 'src/utils/errors/errors';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +16,7 @@ export class UsersService {
 
   /* UTILS */
 
-  async findOne(query) {
+  async findOne(query: FindOneOptions<User>) {
     const user = await this.userRepository.findOne(query);
     return user;
   }
@@ -26,7 +26,7 @@ export class UsersService {
     return user;
   }
 
-  deletePassword = (user) => {
+  deletePassword = (user: User) => {
     delete user.password;
     return user;
   };
@@ -155,8 +155,8 @@ export class UsersService {
     return user.wishes;
   }
 
-  async findUsers(query) {
-    const name = query.query;
+  async findUsers(queryObj: { query: string }) {
+    const name = queryObj.query;
     const users = await this.userRepository.find({
       where: [{ username: Like(`%${name}%`) }, { email: Like(`%${name}%`) }],
     });

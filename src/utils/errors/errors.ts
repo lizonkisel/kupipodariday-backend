@@ -1,31 +1,31 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 class BadRequestException extends HttpException {
-  constructor(message) {
+  constructor(message: string) {
     super(message, HttpStatus.BAD_REQUEST);
   }
 }
 
 class UnauthorizedException extends HttpException {
-  constructor(message) {
+  constructor(message: string) {
     super(message, HttpStatus.UNAUTHORIZED);
   }
 }
 
 class ForbiddenException extends HttpException {
-  constructor(message) {
+  constructor(message: string) {
     super(message, HttpStatus.FORBIDDEN);
   }
 }
 
 class NotFoundException extends HttpException {
-  constructor(message) {
+  constructor(message: string) {
     super(message, HttpStatus.NOT_FOUND);
   }
 }
 
 class ConflictException extends HttpException {
-  constructor(message) {
+  constructor(message: string) {
     super(message, HttpStatus.CONFLICT);
   }
 }

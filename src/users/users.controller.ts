@@ -14,6 +14,7 @@ import { JwtGuard } from '../guards/jwt-guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
+import { IUserRequest } from 'src/utils/types/user-request';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -21,18 +22,18 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  getMe(@Req() req): Promise<UserProfileResponseDto> {
+  getMe(@Req() req: IUserRequest): Promise<UserProfileResponseDto> {
     return this.usersService.getMe(req.user.id);
   }
 
   @Patch('me')
-  updateUser(@Body() updateUserDto: UpdateUserDto, @Req() req) {
+  updateUser(@Body() updateUserDto: UpdateUserDto, @Req() req: IUserRequest) {
     const currentUserId = req.user.id;
     return this.usersService.updateUser(updateUserDto, currentUserId);
   }
 
   @Get('me/wishes')
-  getMyWishes(@Req() req) {
+  getMyWishes(@Req() req: IUserRequest) {
     const currentUserId = req.user.id;
     return this.usersService.getMyWishes(currentUserId);
   }
@@ -48,7 +49,7 @@ export class UsersController {
   }
 
   @Post('find')
-  findUsers(@Body() query: string) {
-    return this.usersService.findUsers(query);
+  findUsers(@Body() queryObj: { query: string }) {
+    return this.usersService.findUsers(queryObj);
   }
 }
