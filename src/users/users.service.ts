@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, Like, Repository } from 'typeorm';
+import { FindOneOptions, Like, Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -75,6 +75,36 @@ export class UsersService {
 
     if (!user) {
       throw new NotFoundException('Такого пользователя не существует');
+    }
+
+    if (updateUserDto.email) {
+      const sameEmailUser = await this.findOne({
+        where: {
+          id: Not(currentUserId),
+          email: updateUserDto.email,
+        },
+      });
+
+      if (sameEmailUser) {
+        throw new ConflictException(
+          'Пользователь с таким email уже существует',
+        );
+      }
+    }
+
+    if (updateUserDto.username) {
+      const sameNameUser = await this.findOne({
+        where: {
+          id: Not(currentUserId),
+          username: updateUserDto.username,
+        },
+      });
+
+      if (sameNameUser) {
+        throw new ConflictException(
+          'Пользователь с таким username уже существует',
+        );
+      }
     }
 
     if (updateUserDto.password) {
