@@ -5,7 +5,7 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { Wish } from './entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { ForbiddenException, NotFoundException } from 'src/utils/errors/errors';
+import { BadRequestException, ForbiddenException, NotFoundException } from 'src/utils/errors/errors';
 import { UpdateWishDto } from './dto/update-wish.dto';
 
 @Injectable()
@@ -174,6 +174,25 @@ export class WishesService {
       price: originalWish.price,
       description: originalWish.description,
     };
+
+    const existSameWishes = await this.findMany({
+      where: {
+        name: originalWish.name,
+        link: originalWish.link,
+        image: originalWish.image,
+        price: originalWish.price,
+        description: originalWish.description,
+      },
+      relations: {
+        owner: true,
+      },
+    });
+
+    const ownWish = existSameWishes.find((wish) => wish.owner.id === currentUserId);
+
+    if (ownWish) {
+      throw new BadRequestException('Вы уже копировали к себе это желание');
+    }
 
     const newWish = await this.create(newWishDto, newOwner);
 
