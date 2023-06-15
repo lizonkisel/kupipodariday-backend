@@ -5,7 +5,11 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { Wish } from './entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { BadRequestException, ForbiddenException, NotFoundException } from 'src/utils/errors/errors';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from 'src/utils/errors/errors';
 import { UpdateWishDto } from './dto/update-wish.dto';
 
 @Injectable()

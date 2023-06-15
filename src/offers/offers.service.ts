@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { Offer } from './entities/offer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, Repository } from 'typeorm';
+import { DataSource, FindOneOptions, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { WishesService } from 'src/wishes/wishes.service';
 import { ForbiddenException, NotFoundException } from 'src/utils/errors/errors';
@@ -10,6 +10,7 @@ import { ForbiddenException, NotFoundException } from 'src/utils/errors/errors';
 @Injectable()
 export class OffersService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(Offer)
     private readonly offerRepository: Repository<Offer>,
     private readonly wishesService: WishesService,
@@ -25,6 +26,7 @@ export class OffersService {
   /* METHODS */
 
   async createOffer(createOfferDto: CreateOfferDto, user: User) {
+    const queryRunner = this.dataSource.createQueryRunner();
     const { amount, itemId, hidden } = createOfferDto;
 
     const wish = await this.wishesService.findOne({
@@ -53,44 +55,46 @@ export class OffersService {
       );
     }
 
-    const updatedWish = await this.wishesService.updateRaisedField(
-      wish,
-      amount,
-    );
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    // const finalOfferDto = {
-    //   amount,
-    //   item: updatedWish,
-    //   user: user,
-    //   hidden,
-    // };
+    try {
+      const updatedWish = await this.wishesService.updateRaisedField(
+        wish,
+        amount,
+      );
 
-    let finalOfferDto;
-    if (hidden) {
-      finalOfferDto = {
-        amount,
-        item: updatedWish,
-        hidden,
-      };
-    } else {
-      finalOfferDto = {
-        amount,
-        item: updatedWish,
-        user: user,
-        hidden,
-      };
-      delete finalOfferDto.user.password;
-      delete finalOfferDto.user.email;
+      let finalOfferDto;
+      if (hidden) {
+        finalOfferDto = {
+          amount,
+          item: updatedWish,
+          hidden,
+        };
+      } else {
+        finalOfferDto = {
+          amount,
+          item: updatedWish,
+          user: user,
+          hidden,
+        };
+        delete finalOfferDto.user.password;
+        delete finalOfferDto.user.email;
+      }
+
+      const newOffer = await this.offerRepository.create({
+        ...finalOfferDto,
+      });
+
+      await this.offerRepository.insert(newOffer);
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new HttpException('Возникла непредвиденная ошибка', 400);
+    } finally {
+      await queryRunner.release();
     }
-
-    const newOffer = await this.offerRepository.create({
-      ...finalOfferDto,
-    });
-
-    return await this.offerRepository.insert(newOffer);
-    // await this.offerRepository.insert(newOffer);
-
-    // return newOffer;
   }
 
   async getAllOffers() {
