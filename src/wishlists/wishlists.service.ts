@@ -158,8 +158,30 @@ export class WishlistsService {
     return this.wishlistRepository.save(updatedWishlist);
   }
 
-  async deleteWishlist(id: number) {
-    const deletedWishlist = await this.wishlistRepository.delete({ id });
+  async deleteWishlist(wishlistId: number, currentUserId: number) {
+    const deletableWishlist = await this.findOne({
+      where: {
+        id: wishlistId,
+      },
+      relations: {
+        owner: true,
+      },
+    });
+
+    if (!deletableWishlist) {
+      throw new NotFoundException('Вишлист с таким id не найден');
+    }
+
+    if (deletableWishlist.owner.id !== currentUserId) {
+      throw new ForbiddenException(
+        'Нельзя удалить вишлист другого пользователя',
+      );
+    }
+
+    const deletedWishlist = await this.wishlistRepository.delete({
+      id: wishlistId,
+    });
+
     return deletedWishlist;
   }
 }

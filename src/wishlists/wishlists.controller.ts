@@ -52,7 +52,9 @@ export class WishlistsController {
   }
 
   @Delete(':id')
-  deleteWishlist(@Param('id') id: number) {
-    return this.wishlistsService.deleteWishlist(id);
+  deleteWishlist(@Param('id') id: number, @Req() req: IUserRequest) {
+    const wishlistId = id;
+    const currentUserId = req.user.id;
+    return this.wishlistsService.deleteWishlist(wishlistId, currentUserId);
   }
 }
