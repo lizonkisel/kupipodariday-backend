@@ -1,14 +1,14 @@
 # KupiPodariDai 
 
-Work of my backend (with common learning frontend) you can test [here] (https://lizonkisel.nomoredomains.work/signin)
+Work of my backend (with common learning frontend) you can test [here](https://lizonkisel.nomoredomains.work/signin)
 
 ## Description
 
 Backend of wishlists service 'KupiPodariDai'. Study Project in [Yandex.Practicum](https://practicum.yandex.ru/)
 
-Frontend for this project you can find [here] (https://github.com/yandex-praktikum/kupipodariday-frontend)
+Frontend for this project you can find [here](https://github.com/yandex-praktikum/kupipodariday-frontend)
 
-[Here] (https://app.swaggerhub.com/apis/zlocate/KupiPodariDay/1.0.0) is API's description
+[Here](https://app.swaggerhub.com/apis/zlocate/KupiPodariDay/1.0.0) is API's description
 
 ## Stack
 
