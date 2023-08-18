@@ -1,8 +1,14 @@
 # KupiPodariDai 
 
+Work of my backend (with common learning frontend) you can test [here](https://lizonkisel.nomoredomains.work/signin)
+
 ## Description
 
 Backend of wishlists service 'KupiPodariDai'. Study Project in [Yandex.Practicum](https://practicum.yandex.ru/)
+
+Frontend for this project you can find [here](https://github.com/yandex-praktikum/kupipodariday-frontend)
+
+[Here](https://app.swaggerhub.com/apis/zlocate/KupiPodariDay/1.0.0) is API's description
 
 ## Stack
 
@@ -44,7 +50,3 @@ This project will works correctly with **node v18.17.1**
 3. Do `npm run start` to test the project. For testing you should send requests to localhost:3001.  
 
 4. Also you can run the project by using other scripts (see package.json)
-
-## Improvement plans
-
-Add documentations with project's endpoints
