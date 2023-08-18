@@ -39,6 +39,8 @@ Frontend for this project you can find [here](https://github.com/yandex-praktiku
   }
 ```
 
+And PostgreSQL 12.15
+
 ## Install and start-up
 
 This project will works correctly with **node v18.17.1**
